@@ -1,11 +1,13 @@
 import { TextField } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import Base from "./Base";
 
 export default function CheckOut() {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   if (isOrderPlaced) {
     return <Redirect to="/paymentsuccessfull" />;
   }

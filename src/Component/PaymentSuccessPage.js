@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import Base from "./Base";
 import Lottie from "react-lottie";
 import animationData from "../icons/16271-payment-successful.json";
@@ -6,6 +6,9 @@ import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 export default function PaymentSuccessPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   return (
     <Base>
       <div class="container">

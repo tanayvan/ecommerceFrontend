@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import Base from "./Base";
 import CartProduct from "./CartProduct";
 
 export default function CartPage() {
   const [isOrdered, setIsOrdered] = useState(false);
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   if (isOrdered) {
     return <Redirect to="/checkout" />;
   }
