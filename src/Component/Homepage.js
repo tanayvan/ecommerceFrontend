@@ -1,38 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./Card";
+
+import Lottie from "react-lottie";
+import animationData from "../icons/25973-loading-dots.json";
 
 import ourphoto from "../icons/ourpic.jpg";
 import Base from "./Base";
-import { Link } from "react-router-dom";
-
-const Product = [
-  {
-    title: "GB Graphic Tee V1",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1527718641255-324f8e2d0421?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=701&q=80",
-  },
-  {
-    title: "GB Crewneck Tee V1",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1484517186945-df8151a1a871?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=687&q=80",
-  },
-  {
-    title: "GB Graphic Tee V2",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1496056013337-d6a1dd4fb8a3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=636&q=80",
-  },
-  {
-    title: "GB  Tee V4",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1512327428889-607eeb19efe8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80",
-  },
-];
+import { getTshirts } from "../Apicalls/Apicalls";
 
 export default function Homepage() {
+  const [loading, setLoading] = useState(true);
+  const [Product, setProduct] = useState([]);
+  useEffect(() => {
+    getTshirts().then((data) => {
+      console.log(data);
+      setProduct(data);
+      setLoading(false);
+    });
+  }, []);
+  if (loading) {
+    return (
+      <Base>
+        <div class="container">
+          <Lottie
+            options={{
+              autoplay: true,
+              animationData: animationData,
+            }}
+            height={300}
+            isStopped={!loading}
+          />
+        </div>
+      </Base>
+    );
+  }
   return (
     <>
       <Base>
@@ -43,9 +44,10 @@ export default function Homepage() {
             {Product.map((item) => (
               <div class="col-lg-3 col-md-4 col-sm-6 col-12">
                 <Card
-                  title={item.title}
+                  id={item._id}
+                  title={item.name}
                   price={item.price}
-                  url={item.Imageurl}
+                  url={item.productImages[0]}
                 />
               </div>
             ))}

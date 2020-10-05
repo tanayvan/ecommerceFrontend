@@ -14,53 +14,49 @@ import { motion } from "framer-motion";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
+import Lottie from "react-lottie";
+import animationData from "../icons/25973-loading-dots.json";
+
 // Import Swiper styles
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/pagination/pagination.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
 import { Link } from "react-router-dom";
+import { getATshirts } from "../Apicalls/Apicalls";
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
-const Product = {
-  title: "GB Graphic Tee V1",
-  price: 299,
-  Imageurl:
-    "https://images.unsplash.com/photo-1527718641255-324f8e2d0421?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=701&q=80",
-};
-
-const data = [
-  {
-    title: "GB Graphic Tee V2",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1496056013337-d6a1dd4fb8a3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=636&q=80",
-  },
-  {
-    title: "GB Graphic Tee V2",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-  },
-  {
-    title: "GB  Tee V4",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1512327428889-607eeb19efe8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80",
-  },
-  {
-    title: "GB  Tee V4",
-    price: 299,
-    Imageurl:
-      "https://images.unsplash.com/photo-1523585298601-d46ae038d7d3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-  },
-];
-
-export default function ProductPage() {
+export default function ProductPage(props) {
+  const [product, setProduct] = useState({});
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     window.scrollTo(0, 0);
-  });
-
+    const id = props.match.params.id;
+    console.log(id);
+    getATshirts(id)
+      .then((data) => {
+        console.log(data);
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+  if (loading) {
+    return (
+      <Base>
+        <div class="container">
+          <Lottie
+            options={{
+              autoplay: true,
+              animationData: animationData,
+            }}
+            height={300}
+            isStopped={!loading}
+          />
+        </div>
+      </Base>
+    );
+  }
   return (
     <div>
       <Base>
@@ -83,13 +79,10 @@ export default function ProductPage() {
                 onSlideChange={() => console.log("slide change")}
                 loop="true"
               >
-                {data.map((item) => {
+                {product.productImages.map((url) => {
                   return (
                     <SwiperSlide>
-                      <motion.img
-                        src={item.Imageurl}
-                        style={{ width: "80%" }}
-                      />
+                      <motion.img src={url} style={{ width: "80%" }} />
                     </SwiperSlide>
                   );
                 })}
@@ -101,11 +94,11 @@ export default function ProductPage() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <div class="display-4">{Product.title}</div>
+              <div class="display-4">{product.name}</div>
               <div
                 class="mt-3"
                 style={{ fontSize: "2rem" }}
-              >{`Rs ${Product.price}`}</div>
+              >{`Rs ${product.price}`}</div>
 
               {/* Size Start */}
               <div className="mt-3">
@@ -137,10 +130,7 @@ export default function ProductPage() {
                   >
                     Description
                   </AccordionSummary>
-                  <AccordionDetails>
-                    Sewed with 100% Premium cotton, this is your everyday tee
-                    perfect for any adventure.
-                  </AccordionDetails>
+                  <AccordionDetails>{product.description}</AccordionDetails>
                 </Accordion>
                 <Accordion className="mt-2">
                   <AccordionSummary
@@ -161,21 +151,6 @@ export default function ProductPage() {
                 </Accordion>
               </div>
             </motion.div>
-          </div>
-          {/* You may also like */}
-          <div class="mt-5">
-            <div class="company text-center">You May Also Like</div>
-            <div class="row mt-2">
-              {data.map((item) => (
-                <div class="col-lg-3 col-md-4 col-6">
-                  <Card
-                    price={item.price}
-                    url={item.Imageurl}
-                    title={item.title}
-                  />
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </Base>

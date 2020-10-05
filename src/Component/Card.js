@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Card({ title, price, url }) {
+export default function Card({ title, price, url, id }) {
   return (
-    <Link to="/product/1234">
+    <Link to={`/product/${id}`}>
       <div className="m-3 product-card">
         <div class="card-container">
           <div class="image-container">
