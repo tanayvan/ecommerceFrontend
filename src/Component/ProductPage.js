@@ -2,12 +2,16 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
+  IconButton,
+  Snackbar,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import CloseIcon from "@material-ui/icons/Close";
 
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Base from "./Base";
-import Card from "./Card";
 
 import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { motion } from "framer-motion";
@@ -17,30 +21,44 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Lottie from "react-lottie";
 import animationData from "../icons/25973-loading-dots.json";
 
+import { listProductDetails } from "../actions/productActions";
+import { getCartData, addtocart } from "../actions/cartActions";
 // Import Swiper styles
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/pagination/pagination.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
 import { Link } from "react-router-dom";
-import { getATshirts } from "../Apicalls/Apicalls";
+import Axios from "axios";
+
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
-export default function ProductPage(props) {
-  const [product, setProduct] = useState({});
-  const [loading, setLoading] = useState(true);
+export default function ProductPage({ match }) {
+  const dispatch = useDispatch();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const productDetails = useSelector((state) => state.productDetails);
+  const cartDetails = useSelector((state) => state.cartDetails);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    const id = props.match.params.id;
-    console.log(id);
-    getATshirts(id)
-      .then((data) => {
-        console.log(data);
-        setProduct(data);
-        setLoading(false);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    dispatch(listProductDetails(match.params.id));
+    dispatch(getCartData());
+  }, [dispatch, match]);
+  const { loading, product } = productDetails;
+  const { cartData } = cartDetails;
+
+  const handleClick = async () => {
+    const { data } = await Axios.post("/api/addtocart/admin", {
+      product: product._id,
+      size: "s",
+      user: "admin",
+    });
+    if (data) {
+      setIsSuccess(true);
+      dispatch(getCartData());
+    }
+  };
+
   if (loading) {
     return (
       <Base>
@@ -103,24 +121,45 @@ export default function ProductPage(props) {
               {/* Size Start */}
               <div className="mt-3">
                 <div class="" style={{ fontSize: "1.8rem" }}>
-                  Size
+                  Size :
                 </div>
                 <div class="" style={{ fontSize: "2rem" }}>
-                  <button type="button" class="btn btn-outline-secondary btn">
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark btn"
+                    style={{ borderRadius: 25 }}
+                  >
                     S
                   </button>
-                  <button type="button" class="btn btn-outline-secondary mx-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark mx-2"
+                    style={{ borderRadius: 25 }}
+                  >
                     M
                   </button>
-                  <button type="button" class="btn btn-outline-secondary  mx-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    style={{ borderRadius: 25 }}
+                  >
                     L
                   </button>
                 </div>
               </div>
               {/* size end */}
-              <Link to="/cart" class="btn btn-dark btn-lg btn-block mt-3">
-                Add To Cart
-              </Link>
+              {cartData.find((obj) => obj.product._id == product._id) ? (
+                <Link to="/cart" class="btn btn-dark btn-lg btn-block mt-3">
+                  Already In Cart
+                </Link>
+              ) : (
+                <Button
+                  class="btn btn-dark btn-lg btn-block mt-3"
+                  onClick={handleClick}
+                >
+                  Add To Cart
+                </Button>
+              )}
               <div class="mt-4">
                 <Accordion>
                   <AccordionSummary
@@ -154,6 +193,29 @@ export default function ProductPage(props) {
           </div>
         </div>
       </Base>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={isSuccess}
+        message="Product Added Successfully"
+        autoHideDuration={2000}
+        onClose={() => {
+          setIsSuccess(false);
+        }}
+        action={
+          <>
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={() => {
+                setIsSuccess(false);
+              }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </>
+        }
+      />
     </div>
   );
 }

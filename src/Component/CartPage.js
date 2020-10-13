@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
+import { getCartData } from "../actions/cartActions";
 import Base from "./Base";
 import CartProduct from "./CartProduct";
 
 export default function CartPage() {
   const [isOrdered, setIsOrdered] = useState(false);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  });
+    dispatch(getCartData());
+  }, [dispatch]);
+  const cartDetails = useSelector((state) => state.cartDetails);
+  const { error, loading, cartData } = cartDetails;
+
   if (isOrdered) {
     return <Redirect to="/checkout" />;
   }
@@ -20,7 +29,9 @@ export default function CartPage() {
             class="col-lg-7 col-12 "
             style={{ borderRight: "1px solid #eaeaec" }}
           >
-            <CartProduct />
+            {cartData.map((item) => (
+              <CartProduct data={item.product} />
+            ))}
           </div>
           <div class="col-md-5 col-12 my-3 ">
             <div
@@ -60,6 +71,7 @@ export default function CartPage() {
               class="btn btn-dark btn-lg btn-block my-4"
               onClick={() => {
                 setIsOrdered(true);
+                console.log(cartData);
               }}
             >
               CheckOut

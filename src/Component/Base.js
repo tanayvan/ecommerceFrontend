@@ -1,10 +1,20 @@
 import React from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartData } from "../actions/cartActions";
 import Navbar from "./Navbar";
 
 export default function Base({ children }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCartData());
+  }, [dispatch]);
+  const cartDetails = useSelector((state) => state.cartDetails);
+  const { cartData } = cartDetails;
   return (
     <div>
-      <Navbar />
+      <Navbar count={cartData.length} />
       {children}
       <div
         class="footer mt-5"

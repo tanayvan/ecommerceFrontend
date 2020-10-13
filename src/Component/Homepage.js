@@ -1,23 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Card from "./Card";
-
+import { useDispatch, useSelector } from "react-redux";
+import { listProducts } from "../actions/productActions";
+import { getCartData } from "../actions/cartActions";
 import Lottie from "react-lottie";
 import animationData from "../icons/25973-loading-dots.json";
 
 import ourphoto from "../icons/ourpic.jpg";
 import Base from "./Base";
-import { getTshirts } from "../Apicalls/Apicalls";
 
 export default function Homepage() {
-  const [loading, setLoading] = useState(true);
-  const [Product, setProduct] = useState([]);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    getTshirts().then((data) => {
-      console.log(data);
-      setProduct(data);
-      setLoading(false);
-    });
-  }, []);
+    dispatch(listProducts());
+  }, [dispatch]);
+
+  const productList = useSelector((state) => state.productList);
+  const { error, loading, products } = productList;
+
+  if (error) {
+    return (
+      <Base>
+        <div class="container">{error}</div>
+      </Base>
+    );
+  }
+
   if (loading) {
     return (
       <Base>
@@ -41,7 +50,7 @@ export default function Homepage() {
         <div class="text-center display-4 mt-5">Shop</div>
         <div class="container mt-5">
           <div class="row">
-            {Product.map((item) => (
+            {products.map((item) => (
               <div class="col-lg-3 col-md-4 col-sm-6 col-12">
                 <Card
                   id={item._id}

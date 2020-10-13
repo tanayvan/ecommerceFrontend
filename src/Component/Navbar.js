@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Drawer } from "@material-ui/core";
+import { Badge, Drawer } from "@material-ui/core";
 import { motion } from "framer-motion";
 
 import List from "@material-ui/core/List";
@@ -10,7 +10,7 @@ import Bag from "../icons/shopping-bag.svg";
 import Menu from "../icons/menu.svg";
 import { Link } from "react-router-dom";
 
-export default function Navbar() {
+export default function Navbar({ count }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -31,7 +31,9 @@ export default function Navbar() {
         </div>
         <div class="icons-container">
           <Link to="/cart" style={{ margin: "0rem 1rem" }}>
-            <img src={Bag} style={{ height: "1.6rem", width: "2rem" }} />
+            <Badge badgeContent={count} color="secondary">
+              <img src={Bag} style={{ height: "1.6rem", width: "2rem" }} />
+            </Badge>
           </Link>
           <div
             className="menu"
