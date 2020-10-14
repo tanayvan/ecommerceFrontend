@@ -30,6 +30,7 @@ import "swiper/components/pagination/pagination.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
 import { Link } from "react-router-dom";
 import Axios from "axios";
+import { API } from "../constants/API";
 
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
@@ -48,7 +49,7 @@ export default function ProductPage({ match }) {
   const { cartData } = cartDetails;
 
   const handleClick = async () => {
-    const { data } = await Axios.post("/api/addtocart/admin", {
+    const { data } = await Axios.post(`${API}/api/addtocart/admin`, {
       product: product._id,
       size: "s",
       user: "admin",
