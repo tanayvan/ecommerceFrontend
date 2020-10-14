@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { API } from "../constants/API";
 import {
   CART_LIST_FAIL,
   CART_LIST_REQUEST,
@@ -8,7 +9,7 @@ import {
 export const getCartData = () => async (dispatch) => {
   try {
     dispatch({ type: CART_LIST_REQUEST });
-    const { data } = await Axios.get("/api/getcart/admin");
+    const { data } = await Axios.get(`${API}/api/getcart/admin`);
     dispatch({
       type: CART_LIST_SUCCESS,
       payload: data,

@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { API } from "../constants/API";
 import {
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_SUCCESS,
@@ -11,7 +12,7 @@ import {
 export const listProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await Axios.get("/api/products");
+    const { data } = await Axios.get(`${API}/api/products`);
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
       payload: data,
@@ -30,7 +31,7 @@ export const listProducts = () => async (dispatch) => {
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
-    const { data } = await Axios.get(`/api/products/${id}`);
+    const { data } = await Axios.get(`${API}/api/products/${id}`);
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
       payload: data,
