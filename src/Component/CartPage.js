@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { getCartData } from "../actions/cartActions";
 import Base from "./Base";
 import CartProduct from "./CartProduct";
@@ -20,6 +20,20 @@ export default function CartPage() {
   if (isOrdered) {
     return <Redirect to="/checkout" />;
   }
+  if (cartData.length == 0) {
+    return (
+      <Base>
+        <div class="container" style={{ textAlign: "center" }}>
+          <div class="m-5">
+            <div className="text-center ">Your Cart is Empty</div>
+            <Link to="/" className="text-muted ml-1">
+              Add Some
+            </Link>
+          </div>
+        </div>
+      </Base>
+    );
+  }
   return (
     <Base>
       <div class="container mt-5">
@@ -30,7 +44,7 @@ export default function CartPage() {
             style={{ borderRight: "1px solid #eaeaec" }}
           >
             {cartData.map((item) => (
-              <CartProduct data={item.product} />
+              <CartProduct data={item.product} id={item._id} />
             ))}
           </div>
           <div class="col-md-5 col-12 my-3 ">

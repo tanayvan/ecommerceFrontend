@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CloseIcon from "@material-ui/icons/Close";
+import DoneIcon from "@material-ui/icons/Done";
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +21,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import Lottie from "react-lottie";
 import animationData from "../icons/25973-loading-dots.json";
+import animationData1 from "../icons/lf30_editor_fnbpw0yn.json";
 
 import { listProductDetails } from "../actions/productActions";
 import { getCartData, addtocart } from "../actions/cartActions";
@@ -37,6 +39,7 @@ SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 export default function ProductPage({ match }) {
   const dispatch = useDispatch();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
   const productDetails = useSelector((state) => state.productDetails);
   const cartDetails = useSelector((state) => state.cartDetails);
 
@@ -49,6 +52,7 @@ export default function ProductPage({ match }) {
   const { cartData } = cartDetails;
 
   const handleClick = async () => {
+    setIsAdded(true);
     const { data } = await Axios.post(`${API}/api/addtocart/admin`, {
       product: product._id,
       size: "s",
@@ -56,6 +60,7 @@ export default function ProductPage({ match }) {
     });
     if (data) {
       setIsSuccess(true);
+      setIsAdded(false);
       dispatch(getCartData());
     }
   };
@@ -149,7 +154,11 @@ export default function ProductPage({ match }) {
                 </div>
               </div>
               {/* size end */}
-              {cartData.find((obj) => obj.product._id == product._id) ? (
+              {isAdded ? (
+                <Button class="btn btn-dark btn-lg btn-block mt-3 " disabled>
+                  Loading...
+                </Button>
+              ) : cartData.find((obj) => obj.product._id == product._id) ? (
                 <Link to="/cart" class="btn btn-dark btn-lg btn-block mt-3">
                   Already In Cart
                 </Link>
@@ -197,7 +206,14 @@ export default function ProductPage({ match }) {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={isSuccess}
-        message="Product Added Successfully"
+        message={
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <DoneIcon fontSize="default" style={{ color: "lightgreen" }} />
+            <span className="ml-2" style={{ color: "lightgreen" }}>
+              Product Added To cart
+            </span>
+          </div>
+        }
         autoHideDuration={2000}
         onClose={() => {
           setIsSuccess(false);
